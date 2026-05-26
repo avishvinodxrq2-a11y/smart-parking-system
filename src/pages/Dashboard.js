@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../auth";
@@ -26,7 +26,7 @@ function Dashboard() {
   };
 
   // FETCH SLOTS
-  const fetchSlots = async () => {
+  const fetchSlots = useCallback(async () => {
     try {
       const res = await axios.get(
         "http://127.0.0.1:8000/api/slots/",
@@ -37,11 +37,12 @@ function Dashboard() {
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
-  };
+  }, []);
 
+  // LOAD SLOTS
   useEffect(() => {
     fetchSlots();
-  }, []);
+  }, [fetchSlots]);
 
   // SELECT SLOT
   const handleSelect = (slot) => {
@@ -89,7 +90,6 @@ function Dashboard() {
 
         handler: async function () {
           // BOOK SLOT AFTER PAYMENT SUCCESS
-
           await axios.post(
             "http://127.0.0.1:8000/api/book-slot/",
             {
